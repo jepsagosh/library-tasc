@@ -2,29 +2,65 @@ import books.books as b
 import json
 import random
 def data_input():  # функция ввода данных книги
-    uni = [input("Название:"), input("Автор:"), int(input("Год выпуска")),
-           int(input("Статус(1- да, 0-нет):"))]  # массив операций ввода данных
-    if uni[3] == 1:
-        uni[3] = True
-    if uni[3] == 0:
-        uni[3] = False
-    book_example = b.book(random.randint(0,9999999), uni[0], uni[1], uni[2], uni[3])
-    if book_example.check_info() == False:
-        print("Ошибка ввода данных")
+    try:
+        uni = [input("Название: "), input("Автор: "), int(input("Год выпуска: ")),
+               int(input("Статус(1- да, 0-нет): "))]  # массив операций ввода данных
+    except (ValueError or (uni[3] != (1 or 0))):
         return False
     else:
+        if uni[3] != (1 or 0):
+            return False
+        if uni[3] == 1:
+            uni[3] = True
+        if uni[3] == 0:
+            uni[3] = False
+        book_example = b.book(random.randint(0, 9999999), uni[0], uni[1], uni[2], uni[3])
         return book_example.create_dict()
 
 
-def json_saver(data,file):
-    json.dump({data[0]:data},open(file,"w"),indent= 5, ensure_ascii=False,sort_keys=True)
-    file.write(',\n')
-    return True
 
-def json_reader(file):
-    reading_file = open(file,"r")
-    return json.loads(reading_file)
+def json_create():
+    file_pat = input("Перед началом работы введите путь существующего или нового .json файла - ")
+    try:
+        f = open(file_pat)
+    except IOError:
+        f = open(file_pat,"a")
+        f = open(file_pat,"w")
+        f.write(json.dumps({}))
+    return file_pat
 
-a = data_input()
-print(json_saver(a,"books/booksdata.json"))
-print(json_reader("books/booksdata.json"))
+def json_saver(data,file_path):
+    file = open(file_path,"r")
+    text = file.read()
+    file.close()
+    text_dict = json.loads(text)
+    text_dict.update({len(text_dict):data})
+    json_text = json.dumps(text_dict)
+    file = open(file_path, "w")
+    file.write(json_text)
+    file.close()
+
+def show_all_books(file):
+    db = open(file,"r")
+    books = json.loads(db.read())
+    for i in range(len(books)):
+        number = str(i)
+        book = books[number]
+        book_info = b.book(book["Id"],book["Название"],book["Автор"],book["Год"],book["Статус"])
+        book_info.print_info()
+def delete_book(file,value):
+    db = open(file, "r")
+    books = json.loads(db.read())
+    for i in range(len(books)):
+        number = str(i)
+        book = books[number]
+        if book["Id"] == value:
+            del books[number]
+    json_data = json.dumps(books)
+    file = open(file, "w")
+    file.write(json_data)
+    file.close()
+
+
+
+

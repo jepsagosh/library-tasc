@@ -8,24 +8,32 @@ class book:#общий класс книги
         self.dic = {}
 
 
-    def check_info(self):
-        if ((type(self.Id)!= int )or(type(self.title) != str) or type(self.author) != str or type(self.year) != int or type(self.status)!= bool):
-            return False
-        else:
-            return True
 
     def create_dict(self):
-        if book.check_info(self) == True:
             self.dic["Название"] = self.title
             self.dic["Id"] = self.Id
             self.dic["Автор"] = self.author
             self.dic["Статус"]=self.status
             self.dic["Год"] = self.year
             return self.dic
-        else:
-            return False
-    def print_info(self):
+
+    def import_dic(self,dic):
+        self.dic["Название"] = dic["Название"]
+        self.dic["Id"] = dic["Id"]
+        self.dic["Автор"] = dic["Автор"]
+        self.dic["Статус"] = dic["Статус"]
+        self.dic["Год"] = dic["Год"]
+
+        self.Id = dic["Id"]
+        self.author = dic["Автор"]
+        self.year = dic["Год"]
+        self.title = dic["Автор"]
+        self.status = dic["Статус"]
         return self.dic
+
+
+    def print_info(self):
+        print("Id-",self.Id,",Статус-",",Название-",self.title, ",Год-", self.year)
 
 
 
