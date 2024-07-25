@@ -3,13 +3,11 @@ import json
 import random
 def data_input():  # функция ввода данных книги
     try:
-        uni = [input("Название: "), input("Автор: "), int(input("Год выпуска: ")),
-               int(input("Статус(1- да, 0-нет): "))]  # массив операций ввода данных
+        uni = [input("Название: "), input("Автор: "), input("Год выпуска: "),
+               int(input("Статус(1- доступен, 0-не доступен): "))]  # массив операций ввода данных
     except (ValueError or (uni[3] != (1 or 0))):
         return False
     else:
-        if uni[3] != (1 or 0):
-            return False
         if uni[3] == 1:
             uni[3] = True
         if uni[3] == 0:
@@ -19,7 +17,7 @@ def data_input():  # функция ввода данных книги
 
 
 
-def json_create():
+def json_create():#создание джсона или работа с уже существующим
     file_pat = input("Перед началом работы введите путь существующего или нового .json файла - ")
     try:
         f = open(file_pat)
@@ -29,7 +27,7 @@ def json_create():
         f.write(json.dumps({}))
     return file_pat
 
-def json_saver(data,file_path):
+def json_saver(data,file_path):#Сохранения джсона
     file = open(file_path,"r")
     text = file.read()
     file.close()
@@ -40,7 +38,8 @@ def json_saver(data,file_path):
     file.write(json_text)
     file.close()
 
-def show_all_books(file):
+
+def show_all_books(file):#показ всех книг
     db = open(file,"r")
     books = json.loads(db.read())
     for i in range(len(books)):
@@ -48,7 +47,8 @@ def show_all_books(file):
         book = books[number]
         book_info = b.book(book["Id"],book["Название"],book["Автор"],book["Год"],book["Статус"])
         book_info.print_info()
-def delete_book(file,value):
+
+def delete_book(file,value):#операция удаления книги
     db = open(file, "r")
     books = json.loads(db.read())
     for i in range(len(books)):
@@ -61,6 +61,44 @@ def delete_book(file,value):
     file.write(json_data)
     file.close()
 
+
+def search_book(file,value):#операция поиска книги
+    db = open(file, "r")
+    books = json.loads(db.read())
+    for i in range(len(books)):
+        number = str(i)
+        book = books[number]
+        if book["Год"] == value or book["Название"] ==value or book["Автор"] ==value:
+            book_info = b.book(book["Id"], book["Название"], book["Автор"], book["Год"], book["Статус"])
+            book_info.print_info()
+
+        else:
+            i+=1
+    db.close()
+
+def change_status(file,value):#операция смены статуса
+    db = open(file, "r")
+    books = json.loads(db.read())
+    for i in range(len(books)):
+        number = str(i)
+        book = books[number]
+        if book["Id"] == value:
+            try:
+                stat = int(input("введите статус книги 1- доступен,0- не доступен\n"))
+            except stat != (1 or 0):
+                return False
+            else:
+                if stat == 1:
+                    status = True
+                    book.update(Статус = stat)
+                if status == 0:
+                    status = False
+                    book.update(Статус = stat)
+
+    json_data = json.dumps(books)
+    file = open(file, "w")
+    file.write(json_data)
+    file.close()
 
 
 
